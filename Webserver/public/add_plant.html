@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      type="image/png"
+      sizes="96x96"
+      rel="icon"
+      href="resources/plant-image.png"
+    />
+    <title>Plant control panel</title>
+  </head>
+  <body>
+    <h1>Add Plant</h1>
+    <a href="/">Home</a>
+    <form method="post" id="plantForm" action="/add_plant">
+      <label for="plant_name">Plant name:</label><br />
+      <input
+        type="text"
+        id="plant_name"
+        name="plant_name"
+        required
+        autofocus
+        autocomplete="off"
+      /><br />
+      <label for="soil_humidity">Optimal soil humidity:</label><br />
+      <input
+        type="number"
+        id="soil_humidity"
+        name="soil_humidity"
+        min="1"
+        max="100"
+        required
+        autocomplete="off"
+      /><br />
+      <input type="submit" value="Submit" />
+      <input type="reset" value="Reset" />
+    </form>
+    <script src="frontend.js"></script>
+  </body>
+</html>

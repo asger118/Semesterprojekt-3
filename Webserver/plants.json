@@ -1,0 +1,20 @@
+{
+  "plants": [
+    {
+      "name": "Cactus",
+      "soilHumidity": "10"
+    },
+    {
+      "name": "Tulipan",
+      "soilHumidity": "50"
+    },
+    {
+      "name": "Solsikke",
+      "soilHumidity": "20"
+    },
+    {
+      "name": "Rose",
+      "soilHumidity": "60"
+    }
+  ]
+}
