@@ -15,6 +15,14 @@
     {
       "name": "Rose",
       "soilHumidity": "60"
+    },
+    {
+      "name": "Fredslilje'",
+      "soilHumidity": "40"
+    },
+    {
+      "name": "Fredslilje",
+      "soilHumidity": "40"
     }
   ]
 }
