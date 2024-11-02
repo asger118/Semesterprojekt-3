@@ -6,7 +6,7 @@ document
     const soilHumidity = document.getElementById("soil_humidity").value;
 
     // Send the data to the server
-    fetch("/add_plant", {
+    fetch("/api/add_plant", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

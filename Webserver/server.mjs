@@ -26,16 +26,39 @@ app.use((req, res, next) => {
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
-// Define the route to serve the HTML page
+// Route to static files
 app.use(express.static(__dirname + "/public"));
 
-// Define additional routes for different HTML pages
+// Add plant page api
 app.get("/add_plant", (req, res) => {
-  res.sendFile(__dirname + "/public/add_plant.html");
+  res.sendFile(__dirname + "/public/pages/add_plant.html");
 });
 
-// New route to handle adding a plant
-app.post("/add_plant", (req, res) => {
+// Data page api
+app.get("/data_page", (req, res) => {
+  res.sendFile(__dirname + "/public/pages/data_page.html");
+});
+
+// Home page api
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/pages/index.html");
+});
+
+// Api to get list of all plant names
+app.get("/api/plants", (req, res) => {
+  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading plants.json:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    const plants = JSON.parse(data).plants.map((plant) => plant.name);
+    res.json(plants);
+  });
+});
+
+// Api to handle adding a plant
+app.post("/api/add_plant", (req, res) => {
   const { plant_name: name, soil_humidity: soilHumidity } = req.body; // Correctly reference fields from form
 
   // Read the existing data from the file

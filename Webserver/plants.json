@@ -23,6 +23,14 @@
     {
       "name": "Fredslilje",
       "soilHumidity": "40"
+    },
+    {
+      "name": "random",
+      "soilHumidity": "100"
+    },
+    {
+      "name": "ged",
+      "soilHumidity": "6"
     }
   ]
 }

@@ -9,11 +9,15 @@
       rel="icon"
       href="resources/plant-image.png"
     />
-    <title>Plant control panel</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <title>Add plant</title>
   </head>
   <body>
-    <h1>Add Plant</h1>
-    <a href="/">Home</a>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a class="active" href="/add_plant">Tilføj plante</a></li>
+      <li><a href="/data_page">Log data</a></li>
+    </ul>
     <form method="post" id="plantForm" action="/add_plant">
       <label for="plant_name">Plant name:</label><br />
       <input
@@ -37,6 +41,6 @@
       <input type="submit" value="Submit" />
       <input type="reset" value="Reset" />
     </form>
-    <script src="frontend.js"></script>
+    <script src="../js/add_plant.js"></script>
   </body>
 </html>
