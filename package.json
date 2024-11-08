@@ -2,11 +2,9 @@
   "name": "semesterprojekt-3",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.mjs",
   "scripts": {
-    "frontend": "node Frontend/server.mjs",
-    "backend": "node Backend/server.mjs",
-    "start-all": "npm-run-all --parallel frontend backend"
+    
   },
   "keywords": [],
   "author": "",

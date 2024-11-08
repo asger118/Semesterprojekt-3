@@ -21,3 +21,18 @@ document.getElementById("dropdown").addEventListener("change", function () {
     submitButton.style.display = "none"; // Hide the button if no valid option is selected
   }
 });
+
+// Ensure this code runs after the document is loaded
+document.addEventListener("DOMContentLoaded", function () {
+  // Get the button element
+  const button = document.getElementById("startLogButton");
+  // Get the dropwdown element
+  const dropdown = document.getElementById("dropdown");
+
+  // Add click event listener to the button
+  button.addEventListener("click", function () {
+    const dropdownValue = selectElement.value;
+    alert(`Start regularing af ${value}`);
+    window.location.href = "/log_page:";
+  });
+});
