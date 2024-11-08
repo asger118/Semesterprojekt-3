@@ -2,8 +2,9 @@ document
   .getElementById("plantForm")
   .addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the default form submission
-    const plantName = document.getElementById("plant_name").value;
-    const soilHumidity = document.getElementById("soil_humidity").value;
+    const name = document.getElementById("name").value;
+    const humidityLow = document.getElementById("humidityLow").value;
+    const humidityHigh = document.getElementById("humidityHigh").value;
 
     // Send the data to the server
     fetch("/api/add_plant", {
@@ -12,8 +13,9 @@ document
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        plant_name: plantName,
-        soil_humidity: soilHumidity,
+        name: name,
+        humidityLow: humidityLow,
+        humidityHigh: humidityHigh,
       }),
     })
       .then((response) => response.json())
@@ -21,6 +23,7 @@ document
         if (data.success) {
           //alert("Plant added successfully!");
           window.location.href = "/";
+          alert(`Plant (${name}) added successfully!`);
         } else {
           alert("Failed to add plant.");
         }

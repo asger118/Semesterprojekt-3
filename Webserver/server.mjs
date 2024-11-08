@@ -18,10 +18,12 @@ const app = express();
 const server = http.createServer(app);
 
 // Middleware to log visits
+/*
 app.use((req, res, next) => {
-  console.log(`Visitor accessed: ${req.url}`);
+  console.log(`User accessed: ${req.url}`);
   next();
 });
+*/
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
@@ -59,7 +61,11 @@ app.get("/api/plants", (req, res) => {
 
 // Api to handle adding a plant
 app.post("/api/add_plant", (req, res) => {
-  const { plant_name: name, soil_humidity: soilHumidity } = req.body; // Correctly reference fields from form
+  const {
+    name: name,
+    humidityLow: humidityLow,
+    humidityHigh: humidityHigh,
+  } = req.body;
 
   // Read the existing data from the file
   fs.readFile("plants.json", "utf8", (err, data) => {
@@ -72,8 +78,15 @@ app.post("/api/add_plant", (req, res) => {
     // Parse the existing JSON data
     const plantData = JSON.parse(data);
 
+    // Determine the new ID
+    let id = 1;
+    if (plantData.plants.length > 0) {
+      const lastPlant = plantData.plants[plantData.plants.length - 1];
+      id = lastPlant.id + 1;
+    }
+
     // Add the new plant to the array
-    plantData.plants.push({ name, soilHumidity });
+    plantData.plants.push({ id, name, humidityLow, humidityHigh });
 
     // Write the updated data back to the file
     fs.writeFile("plants.json", JSON.stringify(plantData, null, 2), (err) => {
@@ -85,6 +98,7 @@ app.post("/api/add_plant", (req, res) => {
       res.json({ success: true });
     });
   });
+  console.log(`User added plant: ${name}`);
 });
 
 // Start the HTTP server

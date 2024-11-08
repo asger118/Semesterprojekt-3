@@ -31,6 +31,48 @@
     {
       "name": "ged",
       "soilHumidity": "6"
+    },
+    {
+      "id": 1,
+      "name": "Solsikke",
+      "humidityLow": "20",
+      "humidityHigh": "10"
+    },
+    {
+      "id": 2,
+      "name": "new plant",
+      "humidityLow": "50",
+      "humidityHigh": "10"
+    },
+    {
+      "id": 3,
+      "name": "newnew plant",
+      "humidityLow": "50",
+      "humidityHigh": "10"
+    },
+    {
+      "id": 4,
+      "name": "æg",
+      "humidityLow": "100",
+      "humidityHigh": "100"
+    },
+    {
+      "id": 5,
+      "name": "dank",
+      "humidityLow": "10",
+      "humidityHigh": "10"
+    },
+    {
+      "id": 6,
+      "name": "crazy",
+      "humidityLow": "10",
+      "humidityHigh": "10"
+    },
+    {
+      "id": 7,
+      "name": "test",
+      "humidityLow": "1",
+      "humidityHigh": "1"
     }
   ]
 }

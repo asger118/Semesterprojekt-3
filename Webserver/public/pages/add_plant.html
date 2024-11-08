@@ -19,20 +19,30 @@
       <li><a href="/data_page">Log data</a></li>
     </ul>
     <form method="post" id="plantForm" action="/add_plant">
-      <label for="plant_name">Plant name:</label><br />
+      <label for="name">Name:</label><br />
       <input
         type="text"
-        id="plant_name"
-        name="plant_name"
+        id="name"
+        name="name"
         required
         autofocus
         autocomplete="off"
       /><br />
-      <label for="soil_humidity">Optimal soil humidity:</label><br />
+      <label for="humidityHigh">Humidity low:</label><br />
       <input
         type="number"
-        id="soil_humidity"
-        name="soil_humidity"
+        id="humidityHigh"
+        name="humidityHigh"
+        min="1"
+        max="100"
+        required
+        autocomplete="off"
+    /><br />
+      <label for="humidityLow">Humidity high:</label><br />
+      <input
+        type="number"
+        id="humidityLow"
+        name="humidityLow"
         min="1"
         max="100"
         required
