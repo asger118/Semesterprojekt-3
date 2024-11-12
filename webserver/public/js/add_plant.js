@@ -24,9 +24,9 @@ document
         if (data.success) {
           //alert("Plant added successfully!");
           window.location.href = "/admin_page";
-          alert(`Plant (${name}) added successfully!`);
+          alert(`Planten (${name}) er tilføjet!`);
         } else {
-          alert("Failed to add plant.");
+          alert("Kunne ikke tilføje plante.");
         }
       })
       .catch((error) => console.error("Error:", error));

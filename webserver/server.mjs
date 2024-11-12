@@ -56,7 +56,7 @@ app.get("/api/plants/names", (req, res) => {
   fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
     if (err) {
       console.error("Error reading plants.json:", err);
-      res.status(500).send("Internal Server Error");
+      res.status(500).send("Intern server fejl");
       return;
     }
     const plants = JSON.parse(data).plants.map((plant) => plant.name);
@@ -69,7 +69,7 @@ app.get("/api/plants", (req, res) => {
   fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
     if (err) {
       console.error("Error reading plants.json:", err);
-      res.status(500).send("Internal Server Error");
+      res.status(500).send("Intern server fejl");
       return;
     }
     const plants = JSON.parse(data).plants;
@@ -83,7 +83,7 @@ app.delete("/api/plants/delete/:id", (req, res) => {
   fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
     if (err) {
       console.error("Error reading plants.json:", err);
-      res.status(500).send("Internal Server Error");
+      res.status(500).send("Intern server fejl");
       return;
     }
     let plantsData = JSON.parse(data);
@@ -91,7 +91,7 @@ app.delete("/api/plants/delete/:id", (req, res) => {
       (plant) => plant.id === plantId
     );
     if (plantIndex === -1) {
-      res.status(404).send("Plant not found");
+      res.status(404).send("Plante ikke fundet");
       return;
     } // Remove plant from array
     plantsData.plants.splice(plantIndex, 1);
@@ -102,10 +102,10 @@ app.delete("/api/plants/delete/:id", (req, res) => {
       (err) => {
         if (err) {
           console.error("Error writing to plants.json:", err);
-          res.status(500).send("Internal Server Error");
+          res.status(500).send("Intern server fejl");
           return;
         }
-        res.send("Plant deleted successfully");
+        res.send("Plante slettet");
       }
     );
   });
@@ -163,7 +163,7 @@ app.post("/api/add_plant", (req, res) => {
       res.json({ success: true });
     });
   });
-  console.log(`User added plant: ${name}`);
+  console.log(`Bruger tilføjede planten: ${name}`);
 });
 
 // Start the HTTP server

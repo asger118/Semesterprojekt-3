@@ -7,12 +7,12 @@ async function fetchPlants() {
   try {
     const response = await fetch("/api/plants");
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP fejl! status: ${response.status}`);
     }
     const plantNames = await response.json();
     populateTable(plantNames);
   } catch (error) {
-    console.error("Failed to fetch plant data:", error);
+    console.error("Kunne ikke hente plantedata:", error);
   }
 }
 
@@ -53,13 +53,13 @@ function populateTable(plants) {
 }
 
 function deletePlant(id) {
-  if (confirm("Are you sure you want to delete this plant?")) {
+  if (confirm("Er du sikker på du vil slette plante ?")) {
     fetch(`/api/plants/delete/${id}`, {
       method: "DELETE",
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to delete plant");
+          throw new Error("Kunne ikke slette plante...");
         }
         return response.text();
       })
@@ -70,7 +70,7 @@ function deletePlant(id) {
       })
       .catch((error) => {
         console.error(error);
-        alert("An error occurred while deleting the plant");
+        alert("Kunne ikke slette plante...");
       });
   }
 }
