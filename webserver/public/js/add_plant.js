@@ -5,6 +5,7 @@ document
     const name = document.getElementById("name").value;
     const humidityLow = document.getElementById("humidityLow").value;
     const humidityHigh = document.getElementById("humidityHigh").value;
+    const fertilizer = document.getElementById("fertilizer").value;
 
     // Send the data to the server
     fetch("/api/add_plant", {
@@ -22,7 +23,7 @@ document
       .then((data) => {
         if (data.success) {
           //alert("Plant added successfully!");
-          window.location.href = "/";
+          window.location.href = "/admin_page";
           alert(`Plant (${name}) added successfully!`);
         } else {
           alert("Failed to add plant.");

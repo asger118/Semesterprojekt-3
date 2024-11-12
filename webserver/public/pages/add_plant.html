@@ -9,48 +9,29 @@
       rel="icon"
       href="resources/plant-image.png"
     />
-    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/add_plant_styles.css" />
     <title>Add plant</title>
   </head>
-  <body>
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a class="active" href="/add_plant">Tilføj plante</a></li>
-      <li><a href="/data_page">Log data</a></li>
-    </ul>
-    <form method="post" id="plantForm" action="/add_plant">
-      <label for="name">Name:</label><br />
-      <input
-        type="text"
-        id="name"
-        name="name"
-        required
-        autofocus
-        autocomplete="off"
-      /><br />
-      <label for="humidityHigh">Humidity low:</label><br />
-      <input
-        type="number"
-        id="humidityHigh"
-        name="humidityHigh"
-        min="1"
-        max="100"
-        required
-        autocomplete="off"
-    /><br />
-      <label for="humidityLow">Humidity high:</label><br />
-      <input
-        type="number"
-        id="humidityLow"
-        name="humidityLow"
-        min="1"
-        max="100"
-        required
-        autocomplete="off"
-      /><br />
-      <input type="submit" value="Submit" />
-      <input type="reset" value="Reset" />
-    </form>
+  <style> 
+     </style> 
+      </head> 
+      <body> 
+        <div class="form-container"> 
+          <form method="post" id="plantForm" action="/add_plant"> 
+            <label for="name">Navn:</label> 
+            <input type="text" id="name" name="name" required autofocus autocomplete="off" /> 
+            <label for="humidityHigh">Jordfugtighed (Øvre grænse):</label> 
+            <input type="number" id="humidityHigh" name="humidityHigh" min="1" max="100" required autocomplete="off" /> 
+            <label for="humidityLow">Jordfugtighed (Nedre grænse):</label> 
+            <input type="number" id="humidityLow" name="humidityLow" min="1" max="100" required autocomplete="off" /> 
+            <label for="fertilizer">Gødningstal??:<label>
+            <input type="number" id="fertilizer" name="fertilizer" required autocomplete="off"/>  
+            <div class="button-group"> 
+              <input type="submit" value="Gem" /> 
+              <input type="reset" value="Nustil" /> 
+            <button type="button" onclick="window.location.href='/admin_page'">Abryd</button> </div>
+          </form> 
+        </div>
     <script src="../js/add_plant.js"></script>
   </body>
 </html>

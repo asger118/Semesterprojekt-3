@@ -24,7 +24,32 @@ li a:hover {
   background-color: #111;
 }
 
-.add_plant {
+.startLogButton {
   background-color: #19a828;
   display: none; /* Initially hide the button */
+}
+
+.table_container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10%;
+}
+.admin_plant {
+  border-collapse: collapse;
+  width: 100%;
+}
+.admin_plant td,
+.admin_plant th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.admin_plant thead {
+  font-weight: bold;
+}
+.admin_plant th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #f2f2f2;
+  color: black;
 }

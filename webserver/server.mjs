@@ -36,9 +36,14 @@ app.get("/add_plant", (req, res) => {
   res.sendFile(__dirname + "/public/pages/add_plant.html");
 });
 
+// Admin plant page api
+app.get("/admin_page", (req, res) => {
+  res.sendFile(__dirname + "/public/pages/admin_page.html");
+});
+
 // Data page api
-app.get("/data_page", (req, res) => {
-  res.sendFile(__dirname + "/public/pages/data_page.html");
+app.get("/log_page", (req, res) => {
+  res.sendFile(__dirname + "/public/pages/log_page.html");
 });
 
 // Home page api
@@ -47,7 +52,7 @@ app.get("/", (req, res) => {
 });
 
 // Api to get list of all plant names
-app.get("/api/plants", (req, res) => {
+app.get("/api/plants/names", (req, res) => {
   fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
     if (err) {
       console.error("Error reading plants.json:", err);
@@ -55,6 +60,66 @@ app.get("/api/plants", (req, res) => {
       return;
     }
     const plants = JSON.parse(data).plants.map((plant) => plant.name);
+    res.json(plants);
+  });
+});
+
+// API to get list of all plants
+app.get("/api/plants", (req, res) => {
+  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading plants.json:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    const plants = JSON.parse(data).plants;
+    res.json(plants);
+  });
+});
+
+// DELETE endpoint to remove a plant by ID
+app.delete("/api/plants/delete/:id", (req, res) => {
+  const plantId = parseInt(req.params.id); // Read plants from file
+  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading plants.json:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    let plantsData = JSON.parse(data);
+    const plantIndex = plantsData.plants.findIndex(
+      (plant) => plant.id === plantId
+    );
+    if (plantIndex === -1) {
+      res.status(404).send("Plant not found");
+      return;
+    } // Remove plant from array
+    plantsData.plants.splice(plantIndex, 1);
+    fs.writeFile(
+      // Write updated data back to file
+      __dirname + "/plants.json",
+      JSON.stringify(plantsData, null, 2),
+      (err) => {
+        if (err) {
+          console.error("Error writing to plants.json:", err);
+          res.status(500).send("Internal Server Error");
+          return;
+        }
+        res.send("Plant deleted successfully");
+      }
+    );
+  });
+});
+
+// API to edit one plant
+app.get("/api/plants/edit", (req, res) => {
+  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading plants.json:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    const plants = JSON.parse(data).plants;
     res.json(plants);
   });
 });

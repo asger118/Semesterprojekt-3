@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      type="image/png"
+      sizes="96x96"
+      rel="icon"
+      href="resources/plant-image.png"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <title>Add plant</title>
+  </head>
+  <body>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li>
+        <a class="active" href="/admin_page">Adminstrer planteindstillinger</a>
+      </li>
+      <li><a href="/log_page">Log data</a></li>
+    </ul>
+
+    <div class="table_container">
+      <table class="admin_plant" id="plantTable">
+        <thead>
+          <tr>
+            <td>Navn</td>
+            <td>Jordfugtighed [LOW]</td>
+            <td>Jordfugtighed [HIGH]</td>
+            <td colspan="2">Action</td>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button onclick="location.href='/add_plant'">Tilføj plante</button>
+    <script src="../js/admin_page.js"></script>
+  </body>
+</html>

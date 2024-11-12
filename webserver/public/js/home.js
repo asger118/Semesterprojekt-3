@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  fetch("/api/plants")
+  fetch("/api/plants/names")
     .then((response) => response.json())
     .then((data) => {
-      let dropdown = document.getElementById("dropdown");
+      const dropdown = document.getElementById("dropdown");
       data.forEach((name) => {
         let option = document.createElement("option");
         option.value = name;
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.getElementById("dropdown").addEventListener("change", function () {
-  var submitButton = document.getElementById("add_button");
+  const submitButton = document.getElementById("startLogButton");
   if (this.value) {
     submitButton.style.display = "block"; // Show the button when a valid option is selected
   } else {
