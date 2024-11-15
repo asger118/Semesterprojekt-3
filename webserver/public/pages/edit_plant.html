@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      type="image/png"
+      sizes="96x96"
+      rel="icon"
+      href="resources/plant-image.png"
+    />
+    <link rel="stylesheet" href="../css/add_plant_styles.css" />
+    <title>Edit plant</title>
+  </head>
+  <body>
+    <div class="form-container">
+      <form id="plantForm">
+        <label for="name">Navn:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          autofocus
+          autocomplete="off"
+        />
+        <label for="humidityHigh">Jordfugtighed (Øvre grænse):</label>
+        <input
+          type="number"
+          id="humidityHigh"
+          name="humidityHigh"
+          min="1"
+          max="100"
+          required
+          autocomplete="off"
+        />
+        <label for="humidityLow">Jordfugtighed (Nedre grænse):</label>
+        <input
+          type="number"
+          id="humidityLow"
+          name="humidityLow"
+          min="1"
+          max="100"
+          required
+          autocomplete="off"
+        />
+        <label for="fertilizer">Gødningsneveau:</label>
+        <input
+          type="number"
+          id="fertilizer"
+          name="fertilizer"
+          required
+          autocomplete="off"
+        />
+        <div class="button-group">
+          <input type="submit" value="Gem" />
+          <button type="button" onclick="window.location.href='/admin_page'">
+            Abryd
+          </button>
+        </div>
+      </form>
+    </div>
+    <script src="../js/edit_plant.js"></script>
+  </body>
+</html>

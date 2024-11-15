@@ -7,6 +7,11 @@ document
     const humidityHigh = document.getElementById("humidityHigh").value;
     const fertilizer = document.getElementById("fertilizer").value;
 
+    if (humidityHigh < humidityLow) {
+      alert("Humidity lav skal være mindre end huumidity høj");
+      return;
+    }
+
     // Send the data to the server
     fetch("/api/add_plant", {
       method: "POST",
@@ -17,6 +22,7 @@ document
         name: name,
         humidityLow: humidityLow,
         humidityHigh: humidityHigh,
+        fertilizer: fertilizer,
       }),
     })
       .then((response) => response.json())

@@ -10,13 +10,14 @@ import bodyParser from "body-parser"; // For JSON parsing
 
 // Global variables
 const SERVER_PORT = 3000;
-const UART_PORT = "/dev/ttyAMA0";
+const UART_PORT = "/dev/ttyACM0";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Create an HTTP server
 const app = express();
 const server = http.createServer(app);
-
+// Create a WebSocket server attached to the HTTP server
+const io = new Server(server);
 // Middleware to log visits
 /*
 app.use((req, res, next) => {
@@ -44,6 +45,11 @@ app.get("/admin_page", (req, res) => {
 // Data page api
 app.get("/log_page", (req, res) => {
   res.sendFile(__dirname + "/public/pages/log_page.html");
+});
+
+// Edit page api
+app.get("/edit_page/:id", (req, res) => {
+  res.sendFile(__dirname + "/public/pages/edit_plant.html");
 });
 
 // Home page api
@@ -74,6 +80,28 @@ app.get("/api/plants", (req, res) => {
     }
     const plants = JSON.parse(data).plants;
     res.json(plants);
+  });
+});
+
+// API to get a specific plant by ID
+app.get("/api/plants/:id", (req, res) => {
+  const plantId = parseInt(req.params.id, 10); // Convert the ID to an integer
+
+  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading plants.json:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    const plants = JSON.parse(data).plants;
+    const plant = plants.find((p) => p.id === plantId);
+
+    if (!plant) {
+      res.status(404).send("Plant not found");
+      return;
+    }
+
+    res.json(plant);
   });
 });
 
@@ -112,15 +140,35 @@ app.delete("/api/plants/delete/:id", (req, res) => {
 });
 
 // API to edit one plant
-app.get("/api/plants/edit", (req, res) => {
+app.put("/api/plants/edit/:id", (req, res) => {
+  const plantId = req.params.id;
+  const updatedPlant = req.body;
   fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
     if (err) {
       console.error("Error reading plants.json:", err);
       res.status(500).send("Internal Server Error");
       return;
     }
-    const plants = JSON.parse(data).plants;
-    res.json(plants);
+    let plants = JSON.parse(data).plants;
+    let plantIndex = plants.findIndex((plant) => plant.id === plantId);
+    if (plantIndex === -1) {
+      res.status(404).send("Plant not found");
+      return;
+    } // Update the plant data
+    plants[plantIndex] = { ...plants[plantIndex], ...updatedPlant }; // Write the updated plants array back to the file
+    fs.writeFile(
+      __dirname + "/plants.json",
+      JSON.stringify({ plants: plants }, null, 2),
+      "utf8",
+      (err) => {
+        if (err) {
+          console.error("Error writing to plants.json:", err);
+          res.status(500).send("Internal Server Error");
+          return;
+        }
+        res.json({ success: true, message: "Plant updated successfully" });
+      }
+    );
   });
 });
 
@@ -130,6 +178,7 @@ app.post("/api/add_plant", (req, res) => {
     name: name,
     humidityLow: humidityLow,
     humidityHigh: humidityHigh,
+    fertilizer: fertilizer,
   } = req.body;
 
   // Read the existing data from the file
@@ -151,7 +200,7 @@ app.post("/api/add_plant", (req, res) => {
     }
 
     // Add the new plant to the array
-    plantData.plants.push({ id, name, humidityLow, humidityHigh });
+    plantData.plants.push({ id, name, humidityLow, humidityHigh, fertilizer });
 
     // Write the updated data back to the file
     fs.writeFile("plants.json", JSON.stringify(plantData, null, 2), (err) => {
@@ -169,6 +218,7 @@ app.post("/api/add_plant", (req, res) => {
 // Start the HTTP server
 server.listen(SERVER_PORT, () => {
   console.log(`Server running at http://localhost:${SERVER_PORT}`);
+  console.log();
 });
 
 // Setup UART communication
@@ -177,4 +227,14 @@ const uart = new SerialPort({
   baudRate: 9600,
   dataBits: 8,
   parity: "none",
+});
+
+//Read UART/Serial data with linebreak (\r\n) as data seperator
+const parser = uart.pipe(new ReadlineParser({ delimiter: "\r\n" }));
+
+let latestData;
+
+parser.on("data", (data) => {
+  latestData = data.split(","); // Data from Arduino is seperated by commas
+  io.emit("plantLog", JSON.stringify(latestData)); // Send the data to all connected clients
 });

@@ -27,17 +27,22 @@ function populateTable(plants) {
     row.appendChild(nameCell);
 
     const humidityLowCell = document.createElement("td");
-    humidityLowCell.textContent = plant.humidityLow;
+    humidityLowCell.textContent = `${plant.humidityLow} %`;
     row.appendChild(humidityLowCell);
 
     const humidityHighCell = document.createElement("td");
-    humidityHighCell.textContent = plant.humidityHigh;
+    humidityHighCell.textContent = `${plant.humidityHigh} %`;
     row.appendChild(humidityHighCell);
+
+    const fertilizerCell = document.createElement("td");
+    fertilizerCell.textContent = `${plant.fertilizer} μS`;
+    row.appendChild(fertilizerCell);
 
     const editCell = document.createElement("td");
     const editButton = document.createElement("button");
     editButton.textContent = "Edit";
-    editButton.onclick = () => editPlant(plant.id);
+    editButton.onclick = () =>
+      (window.location.href = `/edit_page/${plant.id}`);
     editCell.appendChild(editButton);
     row.appendChild(editCell);
 

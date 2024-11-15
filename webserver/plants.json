@@ -2,11 +2,24 @@
   "plants": [
     {
       "id": 1,
-      "name": "Solsikke",
+      "name": "rose",
       "humidityLow": "40",
-      "humidityHigh": "60",
-      "fertelizerLow": "100",
-      "fertilizerHigh": "200"
+      "humidityHigh": "50",
+      "fertilizer": "10"
+    },
+    {
+    "id": 2,
+    "name": "rose",
+    "humidityLow": "40",
+    "humidityHigh": "50",
+    "fertilizer": "10"
+    },
+    {
+      "id": 3,
+      "name": "rose",
+      "humidityLow": "40",
+      "humidityHigh": "50",
+      "fertilizer": "10"
     }
   ]
 }

@@ -11,6 +11,7 @@
     />
     <link rel="stylesheet" href="../css/style.css" />
     <title>Add plant</title>
+    <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
     <ul>
@@ -18,5 +19,50 @@
       <li><a href="/admin_page">Adminstrer planteindstillinger</a></li>
       <li><a class="active" href="/log_page">Log data</a></li>
     </ul>
+
+    <h1 id="plantName">plant XX</h1>
+    <div class="dataContainer">
+      <h3 id="humidity">0</h3>
+      <h3 id="waterLevel">0</h3>
+      <h3 id="fertilizerlevel">0</h3>
+      <h3 id="conductivity">0</h3>
+    </div>
+    <script src="../js/log_page.js"></script>
   </body>
+  <style>
+    .dataContainer {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .dataContainer h3 {
+      margin: 10px 0;
+      font-size: 1.2em;
+    }
+
+    h1#plantName {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .dataContainer h3#humidity {
+      color: #3498db;
+    }
+
+    .dataContainer h3#waterLevel {
+      color: #1abc9c;
+    }
+
+    .dataContainer h3#fertilizerlevel {
+      color: #e74c3c;
+    }
+
+    .dataContainer h3#conductivity {
+      color: #9b59b6;
+    }
+  </style>
 </html>
