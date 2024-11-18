@@ -1,12 +1,15 @@
+let plants_ = [];
+
 document.addEventListener("DOMContentLoaded", function () {
-  fetch("/api/plants/names")
+  fetch("/api/plants")
     .then((response) => response.json())
-    .then((data) => {
+    .then((plants) => {
+      plants_ = plants;
       const dropdown = document.getElementById("dropdown");
-      data.forEach((name) => {
+      plants.forEach((plant) => {
         let option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
+        option.value = plant.id; // Use plant ID as the value
+        option.textContent = plant.name;
         dropdown.appendChild(option);
       });
     })
@@ -22,17 +25,35 @@ document.getElementById("dropdown").addEventListener("change", function () {
   }
 });
 
+function sendData(plantID) {
+  fetch("/api/startLog", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ plantID }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error("There was an error!", error);
+    });
+}
+
 // Ensure this code runs after the document is loaded
 document.addEventListener("DOMContentLoaded", function () {
   // Get the button element
   const button = document.getElementById("startLogButton");
-  // Get the dropwdown element
+  // Get the dropdown element
   const dropdown = document.getElementById("dropdown");
 
   // Add click event listener to the button
   button.addEventListener("click", function () {
-    const dropdownValue = selectElement.value;
-    alert(`Start regularing af ${value}`);
-    window.location.href = "/log_page:";
+    const dropdownValue = dropdown.value;
+    alert(`Starting regulation of ${dropdownValue}`);
+    sendData(dropdownValue); // Use the selected value directly as the plantID
+    window.location.href = "/log_page";
   });
 });

@@ -10,7 +10,7 @@ import bodyParser from "body-parser"; // For JSON parsing
 
 // Global variables
 const SERVER_PORT = 3000;
-const UART_PORT = "/dev/ttyACM0";
+const UART_PORT = "/dev/ttyAMA0"; // "/dev/ttyACM0"
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Create an HTTP server
@@ -150,7 +150,9 @@ app.put("/api/plants/edit/:id", (req, res) => {
       return;
     }
     let plants = JSON.parse(data).plants;
-    let plantIndex = plants.findIndex((plant) => plant.id === plantId);
+    let plantIndex = plants.findIndex(
+      (plant) => plant.id === parseInt(plantId, 10)
+    );
     if (plantIndex === -1) {
       res.status(404).send("Plant not found");
       return;
@@ -218,7 +220,6 @@ app.post("/api/add_plant", (req, res) => {
 // Start the HTTP server
 server.listen(SERVER_PORT, () => {
   console.log(`Server running at http://localhost:${SERVER_PORT}`);
-  console.log();
 });
 
 // Setup UART communication
@@ -236,5 +237,41 @@ let latestData;
 
 parser.on("data", (data) => {
   latestData = data.split(","); // Data from Arduino is seperated by commas
+  console.log(data);
   io.emit("plantLog", JSON.stringify(latestData)); // Send the data to all connected clients
+});
+
+// Endpoint to send data to UART
+app.post("/api/startLog", (req, res) => {
+  const { plantID } = req.body; // Extract plantID from the request body
+
+  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading plants.json:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+
+    const plants = JSON.parse(data).plants;
+    const plant = plants.find((p) => p.id === parseInt(plantID)); // Find the plant by ID
+
+    if (!plant) {
+      res.status(404).send("Plant not found");
+      return;
+    }
+
+    // start: 1, HumidityLow, HumidityHigh, Fertilizer
+    // stop: 0, HumidityLow, HumidityHigh, Fertilizer
+    let message = `1,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
+
+    uart.write(message, (err) => {
+      if (err) {
+        console.error("Error writing to UART:", err);
+        return res.status(500).send("Error writing to UART");
+      }
+
+      console.log(`Message sent to UART: ${message}`);
+      res.status(200).send("Message sent to UART");
+    });
+  });
 });

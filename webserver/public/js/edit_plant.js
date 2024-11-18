@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const plantId = new URLSearchParams(window.location.search).get("id");
+  const pathParts = window.location.pathname.split("/");
+  const plantId = pathParts[pathParts.length - 1];
   if (plantId) {
     loadPlantData(plantId);
   }
@@ -8,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadPlantData(id) {
   try {
     const response = await fetch(`/api/plants/${id}`);
+
     if (!response.ok) {
       throw new Error(`HTTP Error! status: ${response.status}`);
     }
@@ -44,7 +46,7 @@ document
       humidityHigh: humidityHigh,
       fertilizer: fertilizer,
     };
-
+    console.log("Plant ID:", id);
     try {
       const response = await fetch(`/api/plants/edit/${id}`, {
         method: "PUT",

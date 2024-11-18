@@ -22,47 +22,37 @@
 
     <h1 id="plantName">plant XX</h1>
     <div class="dataContainer">
-      <h3 id="humidity">0</h3>
-      <h3 id="waterLevel">0</h3>
-      <h3 id="fertilizerlevel">0</h3>
-      <h3 id="conductivity">0</h3>
+      <div class="subContainer">
+        <h3>Humidity</h3>
+        <h3 id="humidity">0</h3>
+      </div>
+      <div class="subContainer">
+        <h3>waterLevel</h3>
+        <h3 id="waterLevel">0</h3>
+      </div>
+      <div class="subContainer">
+        <h3>fertilizerlevel</h3>
+        <h3 id="fertilizerlevel">0</h3>
+      </div>
+      <div class="subContainer">
+        <h3>conductivity</h3>
+        <h3 id="conductivity">0</h3>
+      </div>
     </div>
     <script src="../js/log_page.js"></script>
   </body>
   <style>
-    .dataContainer {
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      padding: 20px;
-      max-width: 300px;
+    h1 {
       text-align: center;
     }
-
-    .dataContainer h3 {
-      margin: 10px 0;
-      font-size: 1.2em;
+    .subContainer {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
     }
-
-    h1#plantName {
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-
-    .dataContainer h3#humidity {
-      color: #3498db;
-    }
-
-    .dataContainer h3#waterLevel {
-      color: #1abc9c;
-    }
-
-    .dataContainer h3#fertilizerlevel {
-      color: #e74c3c;
-    }
-
-    .dataContainer h3#conductivity {
-      color: #9b59b6;
+    .dataContainer {
+      width: 20%;
+      margin: auto;
     }
   </style>
 </html>
