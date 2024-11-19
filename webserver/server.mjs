@@ -7,10 +7,11 @@ import fs from "fs"; // Filesystem
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser"; // For JSON parsing
+import internal from "stream";
 
 // Global variables
 const SERVER_PORT = 3000;
-const UART_PORT = "/dev/ttyAMA0"; // "/dev/ttyACM0"
+const UART_PORT = "/dev/ttyACM0"; // "/dev/ttyACM0"
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Create an HTTP server
@@ -231,13 +232,13 @@ const uart = new SerialPort({
 });
 
 //Read UART/Serial data with linebreak (\r\n) as data seperator
-const parser = uart.pipe(new ReadlineParser({ delimiter: "\r\n" }));
+const parser = uart.pipe(new ReadlineParser({ delimiter: "\n" }));
 
 let latestData;
 
 parser.on("data", (data) => {
-  latestData = data.split(","); // Data from Arduino is seperated by commas
   console.log(data);
+  latestData = data.split(","); // Data from Arduino is seperated by commas
   io.emit("plantLog", JSON.stringify(latestData)); // Send the data to all connected clients
 });
 

@@ -8,7 +8,7 @@ document
     const fertilizer = document.getElementById("fertilizer").value;
 
     if (humidityHigh < humidityLow) {
-      alert("Humidity lav skal være mindre end huumidity høj");
+      alert("Humidity lav skal være mindre end humidity høj");
       return;
     }
 

@@ -2,21 +2,21 @@
   "plants": [
     {
       "id": 1,
-      "name": "rose",
+      "name": "Rose",
       "humidityLow": "40",
       "humidityHigh": "50",
       "fertilizer": "10"
     },
     {
       "id": 2,
-      "name": "SOLSIKKE10",
+      "name": "Solsikke",
       "humidityLow": "90",
       "humidityHigh": "98",
       "fertilizer": "5"
     },
     {
       "id": 3,
-      "name": "STILK",
+      "name": "Tulipan",
       "humidityLow": "40",
       "humidityHigh": "50",
       "fertilizer": "10"
