@@ -1,4 +1,5 @@
 const socket = io(); //load socket.io-client and connect to the host that serves the page
+let plantID;
 
 //Socket set up on string "UARTDATA"
 socket.on("plantLog", function (data) {
@@ -18,4 +19,17 @@ function updateFrontend(plantReading) {
   waterLevel.textContent = plantReading[1];
   fertilizerlevel.textContent = plantReading[2];
   conductivity.textContent = plantReading[3];
+}
+
+function stopLog() {
+  fetch("/api/stopLog", {
+    method: "POST",
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error("There was an error!", error);
+    });
 }

@@ -1,13 +1,13 @@
 import { SerialPort, ReadlineParser } from "serialport"; // UART
 import express from "express"; // NodeJS server framework
 import http from "http"; // Server package
-import { Gpio } from "onoff"; // GPIO control
 import { Server } from "socket.io"; // Websocket
 import fs from "fs"; // Filesystem
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser"; // For JSON parsing
-import internal from "stream";
+
+// You can now use the imported modules as needed in your code
 
 // Global variables
 const SERVER_PORT = 3000;
@@ -19,13 +19,6 @@ const app = express();
 const server = http.createServer(app);
 // Create a WebSocket server attached to the HTTP server
 const io = new Server(server);
-// Middleware to log visits
-/*
-app.use((req, res, next) => {
-  console.log(`User accessed: ${req.url}`);
-  next();
-});
-*/
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
@@ -242,10 +235,12 @@ parser.on("data", (data) => {
   io.emit("plantLog", JSON.stringify(latestData)); // Send the data to all connected clients
 });
 
+let currentPlantId; // plant currently getting regulated
+
 // Endpoint to send data to UART
 app.post("/api/startLog", (req, res) => {
   const { plantID } = req.body; // Extract plantID from the request body
-
+  currentPlantId = plantID;
   fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
     if (err) {
       console.error("Error reading plants.json:", err);
@@ -264,6 +259,40 @@ app.post("/api/startLog", (req, res) => {
     // start: 1, HumidityLow, HumidityHigh, Fertilizer
     // stop: 0, HumidityLow, HumidityHigh, Fertilizer
     let message = `1,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
+
+    uart.write(message, (err) => {
+      if (err) {
+        console.error("Error writing to UART:", err);
+        return res.status(500).send("Error writing to UART");
+      }
+
+      console.log(`Message sent to UART: ${message}`);
+      res.status(200).send("Message sent to UART");
+    });
+  });
+});
+
+// Endpoint to send data to UART
+app.post("/api/stopLog", (req, res) => {
+  console.log("stop regulering");
+  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading plants.json:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+
+    const plants = JSON.parse(data).plants;
+    const plant = plants.find((p) => p.id === parseInt(currentPlantId)); // Find the plant by ID
+
+    if (!plant) {
+      res.status(404).send("Plant not found");
+      return;
+    }
+
+    // start: 1, HumidityLow, HumidityHigh, Fertilizer
+    // stop: 0, HumidityLow, HumidityHigh, Fertilizer
+    let message = `0,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
 
     uart.write(message, (err) => {
       if (err) {
