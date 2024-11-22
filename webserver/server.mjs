@@ -2,16 +2,20 @@ import { SerialPort, ReadlineParser } from "serialport"; // UART
 import express from "express"; // NodeJS server framework
 import http from "http"; // Server package
 import { Server } from "socket.io"; // Websocket
-import fs from "fs"; // Filesystem
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser"; // For JSON parsing
-
-// You can now use the imported modules as needed in your code
+import {
+  getPlants,
+  getPlantById,
+  deletePlantById,
+  editPlantById,
+  addPlant,
+} from "./functions/func.mjs";
 
 // Global variables
 const SERVER_PORT = 3000;
-const UART_PORT = "/dev/ttyACM0"; // "/dev/ttyACM0"
+const UART_PORT = "/dev/ttyAMA0"; // "/dev/ttyACM0"
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Create an HTTP server
@@ -51,164 +55,63 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/pages/index.html");
 });
 
-// Api to get list of all plant names
-app.get("/api/plants/names", (req, res) => {
-  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading plants.json:", err);
-      res.status(500).send("Intern server fejl");
-      return;
-    }
-    const plants = JSON.parse(data).plants.map((plant) => plant.name);
-    res.json(plants);
-  });
-});
-
 // API to get list of all plants
-app.get("/api/plants", (req, res) => {
-  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading plants.json:", err);
-      res.status(500).send("Intern server fejl");
-      return;
-    }
-    const plants = JSON.parse(data).plants;
+app.get("/api/plants", async (req, res) => {
+  try {
+    const plants = await getPlants();
     res.json(plants);
-  });
+  } catch (error) {
+    res.status(500).send("Error retrieving plants");
+  }
 });
 
 // API to get a specific plant by ID
-app.get("/api/plants/:id", (req, res) => {
+app.get("/api/plants/:id", async (req, res) => {
   const plantId = parseInt(req.params.id, 10); // Convert the ID to an integer
-
-  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading plants.json:", err);
-      res.status(500).send("Internal Server Error");
-      return;
-    }
-    const plants = JSON.parse(data).plants;
-    const plant = plants.find((p) => p.id === plantId);
-
+  try {
+    const plant = await getPlantById(plantId);
     if (!plant) {
       res.status(404).send("Plant not found");
       return;
     }
-
     res.json(plant);
-  });
+  } catch (error) {
+    res.status(500).send("Error retrieving plant");
+  }
 });
 
 // DELETE endpoint to remove a plant by ID
-app.delete("/api/plants/delete/:id", (req, res) => {
-  const plantId = parseInt(req.params.id); // Read plants from file
-  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading plants.json:", err);
-      res.status(500).send("Intern server fejl");
-      return;
-    }
-    let plantsData = JSON.parse(data);
-    const plantIndex = plantsData.plants.findIndex(
-      (plant) => plant.id === plantId
-    );
-    if (plantIndex === -1) {
-      res.status(404).send("Plante ikke fundet");
-      return;
-    } // Remove plant from array
-    plantsData.plants.splice(plantIndex, 1);
-    fs.writeFile(
-      // Write updated data back to file
-      __dirname + "/plants.json",
-      JSON.stringify(plantsData, null, 2),
-      (err) => {
-        if (err) {
-          console.error("Error writing to plants.json:", err);
-          res.status(500).send("Intern server fejl");
-          return;
-        }
-        res.send("Plante slettet");
-      }
-    );
-  });
+app.delete("/api/plants/delete/:id", async (req, res) => {
+  const plantId = parseInt(req.params.id, 10); // Convert the ID to an integer
+  try {
+    const statusMessage = await deletePlantById(plantId);
+    res.send(statusMessage);
+  } catch (error) {
+    res.status(500).send("Error deleting plant");
+  }
 });
 
 // API to edit one plant
-app.put("/api/plants/edit/:id", (req, res) => {
+app.put("/api/plants/edit/:id", async (req, res) => {
   const plantId = req.params.id;
   const updatedPlant = req.body;
-  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading plants.json:", err);
-      res.status(500).send("Internal Server Error");
-      return;
-    }
-    let plants = JSON.parse(data).plants;
-    let plantIndex = plants.findIndex(
-      (plant) => plant.id === parseInt(plantId, 10)
-    );
-    if (plantIndex === -1) {
-      res.status(404).send("Plant not found");
-      return;
-    } // Update the plant data
-    plants[plantIndex] = { ...plants[plantIndex], ...updatedPlant }; // Write the updated plants array back to the file
-    fs.writeFile(
-      __dirname + "/plants.json",
-      JSON.stringify({ plants: plants }, null, 2),
-      "utf8",
-      (err) => {
-        if (err) {
-          console.error("Error writing to plants.json:", err);
-          res.status(500).send("Internal Server Error");
-          return;
-        }
-        res.json({ success: true, message: "Plant updated successfully" });
-      }
-    );
-  });
+  try {
+    const statusMessage = await editPlantById(plantId, updatedPlant);
+    res.json({ success: true, message: statusMessage });
+  } catch (error) {
+    res.status(500).send("Error editing plant");
+  }
 });
 
-// Api to handle adding a plant
-app.post("/api/add_plant", (req, res) => {
-  const {
-    name: name,
-    humidityLow: humidityLow,
-    humidityHigh: humidityHigh,
-    fertilizer: fertilizer,
-  } = req.body;
-
-  // Read the existing data from the file
-  fs.readFile("plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading the file:", err);
-      res.json({ success: false });
-      return;
-    }
-
-    // Parse the existing JSON data
-    const plantData = JSON.parse(data);
-
-    // Determine the new ID
-    let id = 1;
-    if (plantData.plants.length > 0) {
-      const lastPlant = plantData.plants[plantData.plants.length - 1];
-      id = lastPlant.id + 1;
-    }
-
-    // Add the new plant to the array
-    plantData.plants.push({ id, name, humidityLow, humidityHigh, fertilizer });
-
-    // Write the updated data back to the file
-    fs.writeFile("plants.json", JSON.stringify(plantData, null, 2), (err) => {
-      if (err) {
-        console.error("Error writing the file:", err);
-        res.json({ success: false });
-        return;
-      }
-      res.json({ success: true });
-    });
-  });
-  console.log(`Bruger tilføjede planten: ${name}`);
+// API to handle adding a plant
+app.post("/api/add_plant", async (req, res) => {
+  const { name, humidityLow, humidityHigh, fertilizer } = req.body;
+  try {
+    await addPlant(name, humidityLow, humidityHigh, fertilizer);
+    res.status(201).send("Plant added successfully");
+  } catch (error) {
+    res.status(500).send("Error adding plant");
+  }
 });
 
 // Start the HTTP server
@@ -224,84 +127,78 @@ const uart = new SerialPort({
   parity: "none",
 });
 
-//Read UART/Serial data with linebreak (\r\n) as data seperator
+// Read UART/Serial data with linebreak (\r\n) as data separator
 const parser = uart.pipe(new ReadlineParser({ delimiter: "\n" }));
 
 let latestData;
 
 parser.on("data", (data) => {
   console.log(data);
-  latestData = data.split(","); // Data from Arduino is seperated by commas
+  latestData = data.split(","); // Data from Arduino is separated by commas
   io.emit("plantLog", JSON.stringify(latestData)); // Send the data to all connected clients
 });
 
-let currentPlantId; // plant currently getting regulated
+let currentPlantId; // Plant currently being regulated
 
 // Endpoint to send data to UART
-app.post("/api/startLog", (req, res) => {
+app.post("/api/startLog", async (req, res) => {
   const { plantID } = req.body; // Extract plantID from the request body
   currentPlantId = plantID;
-  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading plants.json:", err);
-      res.status(500).send("Internal Server Error");
-      return;
-    }
 
-    const plants = JSON.parse(data).plants;
-    const plant = plants.find((p) => p.id === parseInt(plantID)); // Find the plant by ID
+  try {
+    const plants = await getPlants();
+    const plant = plants.find((p) => p.id === parseInt(plantID, 10)); // Find the plant by ID
 
     if (!plant) {
       res.status(404).send("Plant not found");
       return;
     }
 
-    // start: 1, HumidityLow, HumidityHigh, Fertilizer
-    // stop: 0, HumidityLow, HumidityHigh, Fertilizer
-    let message = `1,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
+    // Start: 1, HumidityLow, HumidityHigh, Fertilizer
+    // Stop: 0, HumidityLow, HumidityHigh, Fertilizer
+    const message = `1,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
 
     uart.write(message, (err) => {
       if (err) {
         console.error("Error writing to UART:", err);
-        return res.status(500).send("Error writing to UART");
+        res.status(500).send("Error writing to UART");
+        return;
       }
 
       console.log(`Message sent to UART: ${message}`);
       res.status(200).send("Message sent to UART");
     });
-  });
+  } catch (error) {
+    res.status(500).send("Error processing request");
+  }
 });
 
 // Endpoint to send data to UART
-app.post("/api/stopLog", (req, res) => {
-  console.log("stop regulering");
-  fs.readFile(__dirname + "/plants.json", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading plants.json:", err);
-      res.status(500).send("Internal Server Error");
-      return;
-    }
-
-    const plants = JSON.parse(data).plants;
-    const plant = plants.find((p) => p.id === parseInt(currentPlantId)); // Find the plant by ID
+app.post("/api/stopLog", async (req, res) => {
+  try {
+    const plants = await getPlants();
+    const plant = plants.find((p) => p.id === parseInt(currentPlantId, 10)); // Find the plant by ID
 
     if (!plant) {
       res.status(404).send("Plant not found");
       return;
     }
 
-    // start: 1, HumidityLow, HumidityHigh, Fertilizer
-    // stop: 0, HumidityLow, HumidityHigh, Fertilizer
-    let message = `0,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
+    // Start: 1, HumidityLow, HumidityHigh, Fertilizer
+    // Stop: 0, HumidityLow, HumidityHigh, Fertilizer
+    const message = `0,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
 
     uart.write(message, (err) => {
       if (err) {
         console.error("Error writing to UART:", err);
-        return res.status(500).send("Error writing to UART");
+        res.status(500).send("Error writing to UART");
+        return;
       }
 
       console.log(`Message sent to UART: ${message}`);
       res.status(200).send("Message sent to UART");
     });
-  });
+  } catch (error) {
+    res.status(500).send("Error processing request");
+  }
 });
