@@ -1,22 +1,22 @@
 // Ensure your DOM is fully loaded before executing the script
 document.addEventListener("DOMContentLoaded", () => {
-  fetchPlants();
+  getPlants();
 });
 
-async function fetchPlants() {
+async function getPlants() {
   try {
     const response = await fetch("/api/plants");
     if (!response.ok) {
       throw new Error(`HTTP fejl! status: ${response.status}`);
     }
     const plantNames = await response.json();
-    populateTable(plantNames);
+    displayPlants(plantNames);
   } catch (error) {
     console.error("Kunne ikke hente plantedata:", error);
   }
 }
 
-function populateTable(plants) {
+function displayPlants(plants) {
   const tbody = document.querySelector("#plantTable tbody");
   plants.forEach((plant) => {
     const row = document.createElement("tr");

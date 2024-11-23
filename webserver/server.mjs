@@ -15,7 +15,7 @@ import {
 
 // Global variables
 const SERVER_PORT = 3000;
-const UART_PORT = "/dev/ttyAMA0"; // "/dev/ttyACM0"
+const UART_PORT = "/dev/ttyACM0"; // "/dev/ttyACM0"
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Create an HTTP server
@@ -40,6 +40,11 @@ app.get("/admin_page", (req, res) => {
   res.sendFile(__dirname + "/public/pages/admin_page.html");
 });
 
+// Admin plant page api
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/pages/admin_page.html");
+});
+
 // Data page api
 app.get("/log_page", (req, res) => {
   res.sendFile(__dirname + "/public/pages/log_page.html");
@@ -50,8 +55,8 @@ app.get("/edit_page/:id", (req, res) => {
   res.sendFile(__dirname + "/public/pages/edit_plant.html");
 });
 
-// Home page api
-app.get("/", (req, res) => {
+// Start log page api
+app.get("/startLog_page", (req, res) => {
   res.sendFile(__dirname + "/public/pages/index.html");
 });
 
@@ -146,8 +151,7 @@ app.post("/api/startLog", async (req, res) => {
   currentPlantId = plantID;
 
   try {
-    const plants = await getPlants();
-    const plant = plants.find((p) => p.id === parseInt(plantID, 10)); // Find the plant by ID
+    const plant = await getPlantById(parseInt(plantID, 10));
 
     if (!plant) {
       res.status(404).send("Plant not found");

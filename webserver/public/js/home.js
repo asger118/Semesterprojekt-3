@@ -25,7 +25,7 @@ document.getElementById("dropdown").addEventListener("change", function () {
   }
 });
 
-function sendData(plantID) {
+function startLog(plantID) {
   fetch("/api/startLog", {
     method: "POST",
     headers: {
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
   button.addEventListener("click", function () {
     const dropdownValue = dropdown.value;
     alert(`Starting regulation of ${dropdownValue}`);
-    sendData(dropdownValue); // Use the selected value directly as the plantID
+    startLog(dropdownValue); // Use the selected value directly as the plantID
     window.location.href = "/log_page";
   });
 });
