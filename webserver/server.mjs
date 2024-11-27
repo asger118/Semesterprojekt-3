@@ -4,7 +4,6 @@ import http from "http"; // Server package
 import { Server } from "socket.io"; // Websocket
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import bodyParser from "body-parser"; // For JSON parsing
 import {
   getPlants,
   getPlantById,
@@ -15,7 +14,7 @@ import {
 
 // Global variables
 const SERVER_PORT = 3000;
-const UART_PORT = "/dev/ttyACM0"; // "/dev/ttyACM0"
+const UART_PORT = "/dev/ttyAMA0"; // "/dev/ttyACM0"
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Create an HTTP server
@@ -25,7 +24,9 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // Middleware to parse JSON bodies
-app.use(bodyParser.json());
+app.use(express.json());
+// Middleware to parse plain text bodies
+app.use(express.text());
 
 // Route to static files
 app.use(express.static(__dirname + "/public"));
@@ -125,6 +126,7 @@ server.listen(SERVER_PORT, () => {
 });
 
 // Setup UART communication
+
 const uart = new SerialPort({
   path: UART_PORT,
   baudRate: 9600,
@@ -205,4 +207,16 @@ app.post("/api/stopLog", async (req, res) => {
   } catch (error) {
     res.status(500).send("Error processing request");
   }
+});
+
+app.get("/api/data", (req, res) => {
+  let sendString = "0,12,88,28";
+  res.status(200).send(sendString);
+  console.log(`Data send: ${sendString}`);
+});
+
+app.post("/api/start", (req, res) => {
+  const data = req.body;
+  console.log(`Got data: \x1b[32m${data}\x1b[0m`);
+  res.status(200).send("noice");
 });
