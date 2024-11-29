@@ -9,8 +9,8 @@ async function getPlants() {
     if (!response.ok) {
       throw new Error(`HTTP fejl! status: ${response.status}`);
     }
-    const plantNames = await response.json();
-    displayPlants(plantNames);
+    const plants = await response.json();
+    displayPlants(plants);
   } catch (error) {
     console.error("Kunne ikke hente plantedata:", error);
   }
@@ -20,7 +20,6 @@ function displayPlants(plants) {
   const tbody = document.querySelector("#plantTable tbody");
   plants.forEach((plant) => {
     const row = document.createElement("tr");
-
     // Creating cells for each column
     const nameCell = document.createElement("td");
     nameCell.textContent = plant.name;
@@ -49,6 +48,7 @@ function displayPlants(plants) {
     const deleteCell = document.createElement("td");
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
+
     deleteButton.onclick = () => deletePlant(plant.id);
     deleteCell.appendChild(deleteButton);
     row.appendChild(deleteCell);

@@ -16,9 +16,9 @@ async function loadPlantData(id) {
     const plant = await response.json();
     document.getElementById("plantForm").setAttribute("data-id", id);
     document.getElementById("name").value = plant.name;
-    document.getElementById("humidityHigh").value = plant.humidityHigh;
-    document.getElementById("humidityLow").value = plant.humidityLow;
-    document.getElementById("fertilizer").value = plant.fertilizer;
+    document.getElementById("humidityHigh").valueAsNumber = plant.humidityHigh;
+    document.getElementById("humidityLow").valueAsNumber = plant.humidityLow;
+    document.getElementById("fertilizer").valueAsNumber = plant.fertilizer;
   } catch (error) {
     console.error("Could not load plant data:", error);
   }
@@ -31,9 +31,9 @@ document
 
     const id = this.getAttribute("data-id");
     const name = document.getElementById("name").value;
-    const humidityLow = document.getElementById("humidityLow").value;
-    const humidityHigh = document.getElementById("humidityHigh").value;
-    const fertilizer = document.getElementById("fertilizer").value;
+    const humidityLow = document.getElementById("humidityLow").valueAsNumber;
+    const humidityHigh = document.getElementById("humidityHigh").valueAsNumber;
+    const fertilizer = document.getElementById("fertilizer").valueAsNumber;
 
     if (humidityHigh < humidityLow) {
       alert("Humidity lav skal være mindre end humidity høj");

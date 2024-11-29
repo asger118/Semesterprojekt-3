@@ -1,4 +1,3 @@
-import { SerialPort, ReadlineParser } from "serialport"; // UART
 import express from "express"; // NodeJS server framework
 import http from "http"; // Server package
 import { Server } from "socket.io"; // Websocket
@@ -11,11 +10,19 @@ import {
   editPlantById,
   addPlant,
 } from "./functions/func.mjs";
+import {
+  DatabaseCommunicator,
+  PlantSetting,
+  PlantLog,
+} from "./Database/DatabaseCommunicator.js";
 
 // Global variables
 const SERVER_PORT = 3000;
-const UART_PORT = "/dev/ttyAMA0"; // "/dev/ttyACM0"
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Setup database
+let databaseCom = new DatabaseCommunicator();
+await databaseCom.SetupDatabase();
 
 // Create an HTTP server
 const app = express();
@@ -64,7 +71,8 @@ app.get("/startLog_page", (req, res) => {
 // API to get list of all plants
 app.get("/api/plants", async (req, res) => {
   try {
-    const plants = await getPlants();
+    //const plants = await getPlants();
+    const plants = await databaseCom.getAllSettings();
     res.json(plants);
   } catch (error) {
     res.status(500).send("Error retrieving plants");
@@ -75,7 +83,7 @@ app.get("/api/plants", async (req, res) => {
 app.get("/api/plants/:id", async (req, res) => {
   const plantId = parseInt(req.params.id, 10); // Convert the ID to an integer
   try {
-    const plant = await getPlantById(plantId);
+    const plant = await databaseCom.getSettingById(plantId);
     if (!plant) {
       res.status(404).send("Plant not found");
       return;
@@ -90,8 +98,9 @@ app.get("/api/plants/:id", async (req, res) => {
 app.delete("/api/plants/delete/:id", async (req, res) => {
   const plantId = parseInt(req.params.id, 10); // Convert the ID to an integer
   try {
-    const statusMessage = await deletePlantById(plantId);
-    res.send(statusMessage);
+    console.log(plantId);
+    await databaseCom.deleteSetting(plantId);
+    res.send("plant deleted succesfully");
   } catch (error) {
     res.status(500).send("Error deleting plant");
   }
@@ -102,8 +111,8 @@ app.put("/api/plants/edit/:id", async (req, res) => {
   const plantId = req.params.id;
   const updatedPlant = req.body;
   try {
-    const statusMessage = await editPlantById(plantId, updatedPlant);
-    res.json({ success: true, message: statusMessage });
+    await databaseCom.updateSettingById(plantId, updatedPlant);
+    res.json({ success: true, message: "plant updated succesefully" });
   } catch (error) {
     res.status(500).send("Error editing plant");
   }
@@ -113,10 +122,15 @@ app.put("/api/plants/edit/:id", async (req, res) => {
 app.post("/api/add_plant", async (req, res) => {
   const { name, humidityLow, humidityHigh, fertilizer } = req.body;
   try {
-    await addPlant(name, humidityLow, humidityHigh, fertilizer);
-    res.status(201).send("Plant added successfully");
+    // await addPlant(name, humidityLow, humidityHigh, fertilizer);
+    const setting = { name, humidityLow, humidityHigh, fertilizer };
+    await databaseCom.addSetting(setting);
+    res
+      .status(200)
+      .json({ success: true, message: "Plant added successfully" });
   } catch (error) {
-    res.status(500).send("Error adding plant");
+    console.error("Error adding plant:", error);
+    res.status(500).json({ success: false, message: "Error adding plant" });
   }
 });
 
@@ -125,27 +139,8 @@ server.listen(SERVER_PORT, () => {
   console.log(`Server running at http://localhost:${SERVER_PORT}`);
 });
 
-// Setup UART communication
-
-const uart = new SerialPort({
-  path: UART_PORT,
-  baudRate: 9600,
-  dataBits: 8,
-  parity: "none",
-});
-
-// Read UART/Serial data with linebreak (\r\n) as data separator
-const parser = uart.pipe(new ReadlineParser({ delimiter: "\n" }));
-
-let latestData;
-
-parser.on("data", (data) => {
-  console.log(data);
-  latestData = data.split(","); // Data from Arduino is separated by commas
-  io.emit("plantLog", JSON.stringify(latestData)); // Send the data to all connected clients
-});
-
 let currentPlantId; // Plant currently being regulated
+let message;
 
 // Endpoint to send data to UART
 app.post("/api/startLog", async (req, res) => {
@@ -162,18 +157,7 @@ app.post("/api/startLog", async (req, res) => {
 
     // Start: 1, HumidityLow, HumidityHigh, Fertilizer
     // Stop: 0, HumidityLow, HumidityHigh, Fertilizer
-    const message = `1,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
-
-    uart.write(message, (err) => {
-      if (err) {
-        console.error("Error writing to UART:", err);
-        res.status(500).send("Error writing to UART");
-        return;
-      }
-
-      console.log(`Message sent to UART: ${message}`);
-      res.status(200).send("Message sent to UART");
-    });
+    message = `1,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
   } catch (error) {
     res.status(500).send("Error processing request");
   }
@@ -192,31 +176,19 @@ app.post("/api/stopLog", async (req, res) => {
 
     // Start: 1, HumidityLow, HumidityHigh, Fertilizer
     // Stop: 0, HumidityLow, HumidityHigh, Fertilizer
-    const message = `0,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
-
-    uart.write(message, (err) => {
-      if (err) {
-        console.error("Error writing to UART:", err);
-        res.status(500).send("Error writing to UART");
-        return;
-      }
-
-      console.log(`Message sent to UART: ${message}`);
-      res.status(200).send("Message sent to UART");
-    });
+    message = `0,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
   } catch (error) {
     res.status(500).send("Error processing request");
   }
 });
 
 app.get("/api/data", (req, res) => {
-  let sendString = "0,12,88,28";
-  res.status(200).send(sendString);
-  console.log(`Data send: ${sendString}`);
+  res.status(200).send(message);
+  console.log(`Data send: ${message}`);
 });
 
-app.post("/api/start", (req, res) => {
+app.post("/api/data", (req, res) => {
   const data = req.body;
   console.log(`Got data: \x1b[32m${data}\x1b[0m`);
-  res.status(200).send("noice");
+  res.status(200).send("Good job brormand");
 });
