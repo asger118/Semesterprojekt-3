@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add click event listener to the button
   button.addEventListener("click", function () {
+    console.log("start log");
     const dropdownValue = dropdown.value;
     alert(`Starting regulation of ${dropdownValue}`);
     startLog(dropdownValue); // Use the selected value directly as the plantID

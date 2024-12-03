@@ -65,8 +65,9 @@ class DatabaseCommunicator {
                      CREATE TABLE IF NOT EXISTS PlantLog (
                           id INTEGER,
                           humidity REAL NOT NULL,
-                          temp REAL NOT NULL,
+                          waterlevel REAL NOT NULL,
                           fertilization REAL NOT NULL,
+                          conductivity REAL NOT NULL,
                           time TEXT NOT NULL DEFAULT (datetime('now','localtime'))
                       )
                       `;
@@ -173,13 +174,14 @@ class DatabaseCommunicator {
 
   async saveLog(PlantLog) {
     const sql =
-      "INSERT INTO PlantLog (id, humidity, temp, fertilization) VALUES (?,?, ?, ?)";
+      "INSERT INTO PlantLog (id, humidity, waterlevel, fertilization,conductivity) VALUES (?,?,?,?,?)";
 
     const params = [
       PlantLog.id,
       PlantLog.humidity,
-      PlantLog.temp,
+      PlantLog.waterlevel,
       PlantLog.fertilization,
+      PlantLog.conductivity,
     ];
     try {
       await this.runQuery("run", sql, params);
@@ -195,7 +197,14 @@ class DatabaseCommunicator {
     try {
       const rows = await this.runQuery("all", sql, [id]);
       const log = rows.map(
-        (row) => new PlantLog(row.id, row.humidity, row.temp, row.fertilization)
+        (row) =>
+          new PlantLog(
+            row.id,
+            row.humidity,
+            row.waterlevel,
+            row.fertilization,
+            row.conductivity
+          )
       );
       return log;
     } catch (err) {

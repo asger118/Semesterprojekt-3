@@ -3,18 +3,8 @@ import http from "http"; // Server package
 import { Server } from "socket.io"; // Websocket
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import {
-  getPlants,
-  getPlantById,
-  deletePlantById,
-  editPlantById,
-  addPlant,
-} from "./functions/func.mjs";
-import {
-  DatabaseCommunicator,
-  PlantSetting,
-  PlantLog,
-} from "./Database/DatabaseCommunicator.js";
+import { getPlants, getPlantById } from "./functions/func.mjs";
+import { DatabaseCommunicator } from "./Database/DatabaseCommunicator.js";
 
 // Global variables
 const SERVER_PORT = 3000;
@@ -140,7 +130,7 @@ server.listen(SERVER_PORT, () => {
 });
 
 let currentPlantId; // Plant currently being regulated
-let message;
+let message = "0,0,0,0\n";
 
 // Endpoint to send data to UART
 app.post("/api/startLog", async (req, res) => {
@@ -151,6 +141,7 @@ app.post("/api/startLog", async (req, res) => {
     const plant = await getPlantById(parseInt(plantID, 10));
 
     if (!plant) {
+      console.log("/api/startLog: Plant not found");
       res.status(404).send("Plant not found");
       return;
     }
@@ -158,6 +149,7 @@ app.post("/api/startLog", async (req, res) => {
     // Start: 1, HumidityLow, HumidityHigh, Fertilizer
     // Stop: 0, HumidityLow, HumidityHigh, Fertilizer
     message = `1,${plant.humidityLow},${plant.humidityHigh},${plant.fertilizer}\n`;
+    console.log("Start log message: " + message);
   } catch (error) {
     res.status(500).send("Error processing request");
   }
@@ -187,8 +179,25 @@ app.get("/api/data", (req, res) => {
   console.log(`Data send: ${message}`);
 });
 
-app.post("/api/data", (req, res) => {
+app.post("/api/data", async (req, res) => {
   const data = req.body;
   console.log(`Got data: \x1b[32m${data}\x1b[0m`);
+  try {
+    const [humidity, waterlevel, fertilizer, conductivity] = data.split(",");
+    const plantLog = {
+      id: parseFloat(currentPlantId),
+      humidity: parseFloat(humidity),
+      waterlevel: parseFloat(waterlevel),
+      fertilization: parseFloat(fertilizer),
+      conductivity: parseFloat(conductivity),
+    };
+    io.emit("plantLog", plantLog);
+    await databaseCom.saveLog(plantLog);
+  } catch {
+    (error) => {
+      console.error("/api/data err: " + error);
+    };
+  }
+
   res.status(200).send("Good job brormand");
 });
