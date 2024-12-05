@@ -53,7 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
   button.addEventListener("click", function () {
     console.log("start log");
     const dropdownValue = dropdown.value;
-    alert(`Starting regulation of ${dropdownValue}`);
+    const dropdownText = dropdown.options[dropdown.selectedIndex].text;
+    alert(`Reguleringen af ${dropdownText} er startet`);
     startLog(dropdownValue); // Use the selected value directly as the plantID
     window.location.href = "/log_page";
   });

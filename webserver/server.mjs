@@ -3,7 +3,6 @@ import http from "http"; // Server package
 import { Server } from "socket.io"; // Websocket
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { getPlants, getPlantById } from "./functions/func.mjs";
 import { DatabaseCommunicator } from "./Database/DatabaseCommunicator.js";
 
 // Global variables
@@ -138,7 +137,7 @@ app.post("/api/startLog", async (req, res) => {
   currentPlantId = plantID;
 
   try {
-    const plant = await getPlantById(parseInt(plantID, 10));
+    const plant = await databaseCom.getSettingById(parseInt(plantID, 10));
 
     if (!plant) {
       console.log("/api/startLog: Plant not found");
@@ -158,8 +157,11 @@ app.post("/api/startLog", async (req, res) => {
 // Endpoint to send data to UART
 app.post("/api/stopLog", async (req, res) => {
   try {
-    const plants = await getPlants();
-    const plant = plants.find((p) => p.id === parseInt(currentPlantId, 10)); // Find the plant by ID
+    //const plants = await getPlants();
+    //const plant = plants.find((p) => p.id === parseInt(currentPlantId, 10)); // Find the plant by ID
+    const plant = await databaseCom.getSettingById(
+      parseInt(currentPlantId, 10)
+    );
 
     if (!plant) {
       res.status(404).send("Plant not found");

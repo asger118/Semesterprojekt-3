@@ -7,7 +7,7 @@ socket.on("plantLog", function (data) {
 });
 
 async function displayLog(plantReading) {
-  const name = document.getElementById("plantName");
+  const name = document.getElementById("plantHeading");
   const humidity = document.getElementById("humidity");
   const waterLevel = document.getElementById("waterLevel");
   const fertilizerlevel = document.getElementById("fertilizerlevel");
@@ -31,7 +31,7 @@ async function displayLog(plantReading) {
   }
 
   plantID = plantReading.id;
-  name.textContent = plantname;
+  name.innerText = plantname;
   humidity.textContent = plantReading.humidity;
   waterLevel.textContent = plantReading.waterlevel;
   fertilizerlevel.textContent = plantReading.fertilization;
@@ -45,6 +45,8 @@ function stopLog() {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
+      alert("Regulering er stoppet");
+      window.location.href = "/";
     })
     .catch((error) => {
       console.error("There was an error!", error);
