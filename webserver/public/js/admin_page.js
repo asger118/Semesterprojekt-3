@@ -39,7 +39,7 @@ function displayPlants(plants) {
 
     const editCell = document.createElement("td");
     const editButton = document.createElement("button");
-    editButton.textContent = "Edit";
+    editButton.textContent = "Rediger";
     editButton.onclick = () =>
       (window.location.href = `/edit_page/${plant.id}`);
     editCell.appendChild(editButton);
@@ -47,7 +47,7 @@ function displayPlants(plants) {
 
     const deleteCell = document.createElement("td");
     const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
+    deleteButton.textContent = "Slet";
 
     deleteButton.onclick = () => deletePlant(plant.id);
     deleteCell.appendChild(deleteButton);
@@ -58,7 +58,7 @@ function displayPlants(plants) {
 }
 
 function deletePlant(id) {
-  if (confirm("Er du sikker på du vil slette plante ?")) {
+  if (confirm("Er du sikker på du vil slette planten ?")) {
     fetch(`/api/plants/delete/${id}`, {
       method: "DELETE",
     })

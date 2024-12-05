@@ -90,7 +90,7 @@ app.delete("/api/plants/delete/:id", async (req, res) => {
   try {
     console.log(plantId);
     await databaseCom.deleteSetting(plantId);
-    res.send("plant deleted succesfully");
+    res.send("Planten er slettet!");
   } catch (error) {
     res.status(500).send("Error deleting plant");
   }
