@@ -169,6 +169,7 @@ app.post("/api/stopLog", async (req, res) => {
   try {
     //const plants = await getPlants();
     //const plant = plants.find((p) => p.id === parseInt(currentPlantId, 10)); // Find the plant by ID
+
     const plant = await databaseCom.getSettingById(
       parseInt(currentPlantId, 10)
     );

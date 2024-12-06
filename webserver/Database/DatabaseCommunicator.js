@@ -171,6 +171,16 @@ class DatabaseCommunicator {
       throw err;
     }
   }
+  async deletePlantLog(id) {
+    //sql command that runs with id as parameter
+    const sql = "DELETE FROM PlantLog WHERE rowid = ?";
+    try {
+      await this.runQuery("run", sql, [id]);
+    } catch (err) {
+      console.error("Error when adding new setting", err);
+      throw err;
+    }
+  }
 
   async saveLog(PlantLog) {
     const sql =
