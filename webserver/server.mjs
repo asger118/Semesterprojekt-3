@@ -123,6 +123,16 @@ app.post("/api/add_plant", async (req, res) => {
   }
 });
 
+app.get("/api/updateLog", async (req, res) => {
+  try {
+    let logs = await databaseCom.getLogById(1); //Hard codet til id = 1, kom ind i kampen Asger
+    res.status(200).json(logs);
+  } catch (error) {
+    console.error("Error updating graph:", error);
+    res.status(500).json({ success: false, message: "Error updating graph" });
+  }
+});
+
 // Start the HTTP server
 server.listen(SERVER_PORT, () => {
   console.log(`Server running at http://localhost:${SERVER_PORT}`);

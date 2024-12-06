@@ -203,7 +203,8 @@ class DatabaseCommunicator {
             row.humidity,
             row.waterlevel,
             row.fertilization,
-            row.conductivity
+            row.conductivity,
+            row.time
           )
       );
       return log;

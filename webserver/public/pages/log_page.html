@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../css/style.css" />
     <title>Add plant</title>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <ul>
@@ -39,11 +40,35 @@
         <h3 id="conductivity">0</h3>
       </div>
     </div>
+    <div class="stop">
     <button onclick="stopLog()">Stop regulering</button>
+    </div>
+
+    <button onclick="updateLog()">Update Graf</button>
+
+    <div class="chartGrid">
+      <div class="chartBox">
+        <canvas id="humidityChart"></canvas>
+      </div>
+      <div class="chartBox">
+        <canvas id="fertilizationChart"></canvas>
+      </div>
+      <div class="chartBox">
+        <canvas id="conductivityChart"></canvas>
+      </div>
+      <div class="chartBox">
+        <canvas id="waterLevelChart"></canvas>
+      </div>  
+    </div>
+    
+
     <script src="../js/log_page.js"></script>
+
+   
+
   </body>
   <style>
-    button {
+    .stop button {
       background-color: red;
     }
     h1 {
@@ -58,5 +83,23 @@
       width: 20%;
       margin: auto;
     }
+  
+    .chartGrid{
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Opretter to kolonner af samme bredde */
+      grid-template-rows: repeat(2, 1fr);    /* Opretter to rækker, højde justeres automatisk */
+      gap: 20px;                             /* Afstand mellem grafene */
+      justify-items: center;                 /* Centrerer grafene horisontalt */
+      align-items: center;                   /* Centrerer grafene vertikalt */
+      max-width: 1600px;                     /* Maksimal bredde for containeren */
+      margin: 0 auto;                        /* Centrerer containeren på skærmen */
+    }
+
+    canvas {
+      width: 100%; /* Sørger for at canvasen skaleres til containerens bredde */
+      height: 500px; /* Sørger for at canvasen fylder hele højden af containeren */
+      max-width: 100%; /* Maksimal bredde for canvas */
+      max-height: 100%; /* Maksimal højde for canvas */
+    }  
   </style>
 </html>
