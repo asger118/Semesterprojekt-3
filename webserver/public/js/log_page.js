@@ -4,6 +4,7 @@ let plantname;
 //Socket set up on string "UARTDATA"
 socket.on("plantLog", function (data) {
   displayLog(data);
+  updateLog();
 });
 
 async function displayLog(plantReading) {

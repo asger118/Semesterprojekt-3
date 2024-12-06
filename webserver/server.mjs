@@ -125,7 +125,7 @@ app.post("/api/add_plant", async (req, res) => {
 
 app.get("/api/updateLog", async (req, res) => {
   try {
-    let logs = await databaseCom.getLogById(1); //Hard codet til id = 1, kom ind i kampen Asger
+    let logs = await databaseCom.getLogById(currentPlantId); //Hard codet til id = 1, kom ind i kampen Asger
     res.status(200).json(logs);
   } catch (error) {
     console.error("Error updating graph:", error);
@@ -188,7 +188,7 @@ app.post("/api/stopLog", async (req, res) => {
 
 app.get("/api/data", (req, res) => {
   res.status(200).send(message);
-  console.log(`Data send: ${message}`);
+  //console.log(`Data send: ${message}`);
 });
 
 app.post("/api/data", async (req, res) => {
