@@ -93,55 +93,57 @@ function drawGraph(logs) {
     fertilization[i] = logs[i].fertilization;
     conductivity[i] = logs[i].conductivity;
   }
-  if (!chart1) {
-    const chart1 = new Chart("humidityChart", {
-      type: "line",
-      data: {
-        labels: time,
-        datasets: [
-          {
-            data: humidity,
-            borderColor: "red",
-            fill: false,
-          },
-        ],
+  if (chart1) {
+    chart1.destroy();
+    chart2.destroy();
+    chart3.destroy();
+    chart4.destroy();
+  }
+  const chart1 = new Chart("humidityChart", {
+    type: "line",
+    data: {
+      labels: time,
+      datasets: [
+        {
+          data: humidity,
+          borderColor: "red",
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: false,
+        },
+        title: {
+          display: true,
+          text: "Jordfugtighed",
+          font: { size: 24 },
+        },
       },
-      options: {
-        plugins: {
-          legend: {
-            display: false,
-          },
+      scales: {
+        x: {
           title: {
             display: true,
-            text: "Jordfugtighed",
-            font: { size: 24 },
-          },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: "Tidsstempler",
-              font: {
-                size: 14,
-              },
+            text: "Tidsstempler",
+            font: {
+              size: 14,
             },
           },
-          y: {
-            title: {
-              display: true,
-              text: "Jordfugtighed i %",
-              font: {
-                size: 14,
-              },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Jordfugtighed i %",
+            font: {
+              size: 14,
             },
           },
         },
       },
-    });
-  } else {
-    updateGraphData(chart1, time, humidity);
-  }
+    },
+  });
 
   const chart2 = new Chart("waterLevelChart", {
     type: "line",
