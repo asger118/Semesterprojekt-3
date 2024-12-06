@@ -77,6 +77,8 @@ function updateLog() {
     });
 }
 
+let chart1;
+
 function drawGraph(logs) {
   let time = [];
   let humidity = [];
@@ -91,52 +93,55 @@ function drawGraph(logs) {
     fertilization[i] = logs[i].fertilization;
     conductivity[i] = logs[i].conductivity;
   }
-
-  const chart1 = new Chart("humidityChart", {
-    type: "line",
-    data: {
-      labels: time,
-      datasets: [
-        {
-          data: humidity,
-          borderColor: "red",
-          fill: false,
-        },
-      ],
-    },
-    options: {
-      plugins: {
-        legend: {
-          display: false,
-        },
-        title: {
-          display: true,
-          text: "Jordfugtighed",
-          font: { size: 24 },
-        },
+  if (!chart1) {
+    const chart1 = new Chart("humidityChart", {
+      type: "line",
+      data: {
+        labels: time,
+        datasets: [
+          {
+            data: humidity,
+            borderColor: "red",
+            fill: false,
+          },
+        ],
       },
-      scales: {
-        x: {
+      options: {
+        plugins: {
+          legend: {
+            display: false,
+          },
           title: {
             display: true,
-            text: "Tidsstempler",
-            font: {
-              size: 14,
+            text: "Jordfugtighed",
+            font: { size: 24 },
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Tidsstempler",
+              font: {
+                size: 14,
+              },
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Jordfugtighed i %",
+              font: {
+                size: 14,
+              },
             },
           },
         },
-        y: {
-          title: {
-            display: true,
-            text: "Jordfugtighed i %",
-            font: {
-              size: 14,
-            },
-          },
-        },
       },
-    },
-  });
+    });
+  } else {
+    updateGraphData(chart1, time, humidity);
+  }
 
   const chart2 = new Chart("waterLevelChart", {
     type: "line",
@@ -275,4 +280,10 @@ function drawGraph(logs) {
       },
     },
   });
+}
+
+function updateGraphData(chart, newLabels, newData) {
+  chart.data.labels = newLabels; // Opdater labels
+  chart.data.datasets[0].data = newData; // Opdater data
+  chart.update(); // Opdater grafen
 }
