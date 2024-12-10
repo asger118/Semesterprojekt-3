@@ -125,7 +125,7 @@ app.post("/api/add_plant", async (req, res) => {
 
 app.get("/api/updateLog", async (req, res) => {
   try {
-    let logs = await databaseCom.getLogById(currentPlantId); //Hard codet til id = 1, kom ind i kampen Asger
+    let logs = await databaseCom.getLogById(currentPlantId); 
     res.status(200).json(logs);
   } catch (error) {
     console.error("Error updating graph:", error);
@@ -167,8 +167,6 @@ app.post("/api/startLog", async (req, res) => {
 // Endpoint to send data to UART
 app.post("/api/stopLog", async (req, res) => {
   try {
-    //const plants = await getPlants();
-    //const plant = plants.find((p) => p.id === parseInt(currentPlantId, 10)); // Find the plant by ID
 
     const plant = await databaseCom.getSettingById(
       parseInt(currentPlantId, 10)
