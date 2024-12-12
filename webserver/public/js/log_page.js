@@ -1,28 +1,34 @@
 const socket = io(); //load socket.io-client and connect to the host that serves the page
+// Global variables for klient to know wich plant if being regulated
 let plantID;
 let plantname;
-//Socket set up on string "UARTDATA"
+//Socket to recieve updates on sensor data
 socket.on("plantLog", function (data) {
+  // Call function to display new sensor data
   displayLog(data);
+  // Update graphs
   updateLog();
 });
 
+// Function to update HTML dynamically
 async function displayLog(plantReading) {
+  // Get refrence to HTML elements
   const name = document.getElementById("plantHeading");
   const humidity = document.getElementById("humidity");
   const waterLevel = document.getElementById("waterLevel");
   const fertilizerlevel = document.getElementById("fertilizerlevel");
   const conductivity = document.getElementById("conductivity");
 
+  // Check if water level too low
   if (plantReading.waterlevel < 20) {
     alert("Påfyld vand");
   }
-
+  // Check if fertelizer too low
   if (plantReading.fertilization < 10) {
     alert("Påfyld gødning");
   }
 
-  //if plant id changes
+  //if plant id changes set global variable
   if (plantID != plantReading.id) {
     try {
       plantname = await getPlantName(plantReading.id);
@@ -30,7 +36,7 @@ async function displayLog(plantReading) {
       (err) => console.error(err);
     }
   }
-
+  // Set HTML elements to display latest data
   plantID = plantReading.id;
   name.innerText = plantname;
   humidity.textContent = plantReading.humidity;
@@ -38,7 +44,7 @@ async function displayLog(plantReading) {
   fertilizerlevel.textContent = plantReading.fertilization;
   conductivity.textContent = plantReading.conductivity;
 }
-
+// Call endpoint to stop regulation
 function stopLog() {
   fetch("/api/stopLog", {
     method: "POST",
@@ -46,16 +52,19 @@ function stopLog() {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
+      // Succes message
       alert("Regulering er stoppet");
       window.location.href = "/";
     })
     .catch((error) => {
+      // Error message
       console.error("There was an error!", error);
     });
 }
-
+// Function to get name of plant being regulated
 async function getPlantName(id) {
   let name;
+  // get plant by id
   fetch(`/api/plants/${id}`).then((respons) => {
     const plant = respons.data;
     name = plant.name;
