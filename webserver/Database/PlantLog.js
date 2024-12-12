@@ -1,4 +1,5 @@
-class PlantLog {
+//Object that contains the value saved in the databased, and is used to send data between server and database
+class PlantLog { 
   constructor(
     id = 0,
     humidity = 0,

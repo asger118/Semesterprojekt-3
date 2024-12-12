@@ -72,17 +72,25 @@ async function getPlantName(id) {
   return name;
 }
 
+
+
 let chart1;
 let chart2;
 let chart3;
 let chart4;
-function updateLog() {
-  //https://www.w3schools.com/graphics/plot_chartjs.asp
-  fetch("/api/updateLog", {
+/*
+Function: updateLog()
+Description: Get the data from database and use it to draw graph
+Parameters: None
+Return value: None 
+*/
+function updateLog() { 
+  fetch("/api/updateLog", { //Fetch from url updateLog
     method: "GET",
   })
-    .then((response) => response.json())
-    .then((data) => {
+    .then((response) => response.json()) //Get the reponse
+    .then((data) => { //Use the data to draw graphs
+      //Helper function to draw graph
       drawGraph(data);
     })
     .catch((error) => {
@@ -90,13 +98,23 @@ function updateLog() {
     });
 }
 
+
+ /*
+Function: drawGraph(logs)
+Description: Display logs grafikal on the webserver
+Parameters: logs, logs found in databased, which is used to display 
+Return value: None 
+*/
+//https://www.w3schools.com/graphics/plot_chartjs.asp
 function drawGraph(logs) {
+  //Arrays for each data type, used on axis in graph
   let time = [];
   let humidity = [];
   let waterLevel = [];
   let fertilization = [];
   let conductivity = [];
 
+  //Separates the values from logs, so that each type becomes an array
   for (let i = 0; i < logs.length; i++) {
     time[i] = logs[i].time;
     humidity[i] = logs[i].humidity;
@@ -105,15 +123,17 @@ function drawGraph(logs) {
     conductivity[i] = logs[i].conductivity;
   }
 
+  //Checks if chart is already created
   if (!chart1) {
+     //Creating chart for humidity
     chart1 = new Chart("humidityChart", {
       type: "line",
       data: {
-        labels: time,
+        labels: time,  //Sets x-axis
         datasets: [
           {
-            data: humidity,
-            borderColor: "red",
+            data: humidity,  //Sets y-axis
+            borderColor: "red",  //Sets color to red
             fill: false,
           },
         ],
@@ -123,15 +143,15 @@ function drawGraph(logs) {
           legend: {
             display: false,
           },
-          title: {
+          title: {  //Sets title
             display: true,
             text: "Jordfugtighed",
             font: { size: 24 },
           },
         },
         scales: {
-          x: {
-            title: {
+          x: {  //Sets x-axis title
+            title: { 
               display: true,
               text: "Tidsstempler",
               font: {
@@ -139,7 +159,7 @@ function drawGraph(logs) {
               },
             },
           },
-          y: {
+          y: { //Sets y-axis title
             title: {
               display: true,
               text: "Jordfugtighed i %",
@@ -152,19 +172,21 @@ function drawGraph(logs) {
       },
     });
   } else {
+    //If chart is already created run addData, adding data to existing chart
     addData(chart1, time[logs.length - 1], humidity[logs.length - 1]);
-    //updateXAxis(chart1, 20);
   }
 
+  //Checks if chart is already created
   if (!chart2) {
+    //Creating waterLevel chart
     chart2 = new Chart("waterLevelChart", {
       type: "line",
       data: {
-        labels: time,
+        labels: time, //Sets x-axis
         datasets: [
           {
-            data: waterLevel,
-            borderColor: "blue",
+            data: waterLevel,  //Sets y-axis
+            borderColor: "blue",  //Sets color to blue
             fill: false,
           },
         ],
@@ -174,14 +196,14 @@ function drawGraph(logs) {
           legend: {
             display: false,
           },
-          title: {
+          title: {  //Sets title
             display: true,
             text: "Vandbeholdning",
             font: { size: 24 },
           },
         },
         scales: {
-          x: {
+          x: {    //Sets x-axis title
             title: {
               display: true,
               text: "Tidsstempler",
@@ -190,7 +212,7 @@ function drawGraph(logs) {
               },
             },
           },
-          y: {
+          y: {   //Sets y-axis title
             title: {
               display: true,
               text: "Vandniveau i %",
@@ -203,18 +225,21 @@ function drawGraph(logs) {
       },
     });
   } else {
+    //If chart is already created run addData, adding data to existing chart
     addData(chart2, time[logs.length - 1], waterLevel[logs.length - 1]);
   }
 
+  //Checks if chart is already created
   if (!chart3) {
+    //Creates fertilization chart
     chart3 = new Chart("fertilizationChart", {
       type: "line",
       data: {
-        labels: time,
+        labels: time,  //Sets x-axis
         datasets: [
           {
-            data: fertilization,
-            borderColor: "green",
+            data: fertilization,  //Sets y-axis
+            borderColor: "green",  //Sets the color to green
             fill: false,
           },
         ],
@@ -224,14 +249,14 @@ function drawGraph(logs) {
           legend: {
             display: false,
           },
-          title: {
+          title: {  //Sets title
             display: true,
-            text: "Gødningsbeholdning",
+            text: "Gødningsbeholdning",  
             font: { size: 24 },
           },
         },
         scales: {
-          x: {
+          x: {    //Sets x-axis title
             title: {
               display: true,
               text: "Tidsstempler",
@@ -240,7 +265,7 @@ function drawGraph(logs) {
               },
             },
           },
-          y: {
+          y: {    //Sets y-axis title
             title: {
               display: true,
               text: "Gødnings niveau i %",
@@ -253,18 +278,21 @@ function drawGraph(logs) {
       },
     });
   } else {
+     //If chart is already created run addData, adding data to existing chart
     addData(chart3, time[logs.length - 1], fertilization[logs.length - 1]);
   }
 
+  //Checks if chart is already created
   if (!chart4) {
+    //creates conductivity chart
     chart4 = new Chart("conductivityChart", {
       type: "line",
       data: {
-        labels: time,
+        labels: time,  //sets x-axis
         datasets: [
           {
-            data: conductivity,
-            borderColor: "yellow",
+            data: conductivity,  //Sets y-axis title
+            borderColor: "yellow",  //Sets color to yellow
             fill: false,
           },
         ],
@@ -274,14 +302,14 @@ function drawGraph(logs) {
           legend: {
             display: false,
           },
-          title: {
+          title: {  //Sets title
             display: true,
             text: "Ledningsevne",
             font: { size: 24 },
           },
         },
         scales: {
-          x: {
+          x: {  //Set x-axis title
             title: {
               display: true,
               text: "Tidsstempler",
@@ -290,7 +318,7 @@ function drawGraph(logs) {
               },
             },
           },
-          y: {
+          y: {  //Set y-axis title
             title: {
               display: true,
               text: "MicroSiemens/cm",
@@ -303,26 +331,26 @@ function drawGraph(logs) {
       },
     });
   } else {
+    //If chart is already created run addData, adding data to existing chart
     addData(chart4, time[logs.length - 1], conductivity[logs.length - 1]);
   }
 }
 
+
+/*
+Function: addData(chart, label, newdata)
+Description: adds another data point to an already existing chart
+Parameters: chart, the chart that need to be updated. label, new date for x-axis. newdata, new date for y-axis
+Return value: None 
+*/
 function addData(chart, label, newData) {
+  //Add the new label to the x-axis
   chart.data.labels.push(label);
+
+  //Add the new date to the y-axis
   chart.data.datasets.forEach((dataset) => {
     dataset.data.push(newData);
   });
-  chart.update();
-}
-
-function updateXAxis(chart, windowSize = 20) {
-  if (chart.data.labels.length > windowSize) {
-    const start = chart.data.labels.length - windowSize;
-    const end = chart.data.labels.length;
-    chart.options.scales.x = {
-      min: start,
-      max: end,
-    };
-  }
+  //Update chart
   chart.update();
 }
