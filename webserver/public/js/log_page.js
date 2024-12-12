@@ -72,17 +72,25 @@ async function getPlantName(id) {
   return name;
 }
 
+
+
 let chart1;
 let chart2;
 let chart3;
 let chart4;
-function updateLog() {
-  //https://www.w3schools.com/graphics/plot_chartjs.asp
-  fetch("/api/updateLog", {
+/*
+Function: updateLog()
+Description: Get the data from database and use it to draw graph
+Parameters: None
+Return value: None 
+*/
+function updateLog() { 
+  fetch("/api/updateLog", { //Fetch from url updateLog
     method: "GET",
   })
-    .then((response) => response.json())
-    .then((data) => {
+    .then((response) => response.json()) //Get the reponse
+    .then((data) => { //Use the data to draw graphs
+      //Helper function to draw graph
       drawGraph(data);
     })
     .catch((error) => {
@@ -97,6 +105,7 @@ Description: Display logs grafikal on the webserver
 Parameters: logs, logs found in databased, which is used to display 
 Return value: None 
 */
+//https://www.w3schools.com/graphics/plot_chartjs.asp
 function drawGraph(logs) {
   //Arrays for each data type, used on axis in graph
   let time = [];
@@ -327,10 +336,21 @@ function drawGraph(logs) {
   }
 }
 
+
+/*
+Function: addData(chart, label, newdata)
+Description: adds another data point to an already existing chart
+Parameters: chart, the chart that need to be updated. label, new date for x-axis. newdata, new date for y-axis
+Return value: None 
+*/
 function addData(chart, label, newData) {
+  //Add the new label to the x-axis
   chart.data.labels.push(label);
+
+  //Add the new date to the y-axis
   chart.data.datasets.forEach((dataset) => {
     dataset.data.push(newData);
   });
+  //Update chart
   chart.update();
 }
