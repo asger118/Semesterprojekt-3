@@ -3,16 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Favicon image-->
     <link
       type="image/png"
       sizes="96x96"
       rel="icon"
       href="resources/plant-image.png"
     />
+    <!--Load in stylesheet-->
     <link rel="stylesheet" href="../css/style.css" />
     <title>Tilføj plante</title>
   </head>
   <body>
+    <!--Webpage navigation bar-->
     <ul>
       <li><a href="/startLog_page">Start regulering</a></li>
       <li>
@@ -20,7 +23,7 @@
       </li>
       <li><a href="/log_page">Log data</a></li>
     </ul>
-
+    <!--Table to display all plants to user-->
     <div class="table_container">
       <table class="admin_plant" id="plantTable">
         <thead>
@@ -35,7 +38,9 @@
         <tbody></tbody>
       </table>
     </div>
+    <!--Button to add new plant-->
     <button onclick="location.href='/add_plant'">Tilføj plante</button>
+    <!--Load in javascript-->
     <script src="../js/admin_page.js"></script>
   </body>
 </html>

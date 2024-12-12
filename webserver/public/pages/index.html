@@ -3,20 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Load in stylesheet-->
     <link rel="stylesheet" href="../css/style.css" />
     <title>Home</title>
   </head>
   <body>
+    <!--Navigation bar for page-->
     <ul>
       <li><a class="active" href="/startLog_page">Start regulering</a></li>
       <li><a href="/admin_page">Adminstrer planteindstillinger</a></li>
       <li><a href="/log_page">Log data</a></li>
     </ul>
-
+    <!--Dropdpwn menu for user to chose plant for regulation-->
     <select id="dropdown">
       <option disabled selected hidden>Vælg plante</option>
     </select>
+    <!--Button for user to start regulation of chosen plant-->
     <button class="startLogButton" id="startLogButton">Start regulering</button>
+    <!--Load in javascript-->
     <script src="../js/home.js"></script>
   </body>
 </html>
